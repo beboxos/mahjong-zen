@@ -86,7 +86,7 @@ body.trayMode #comboBar { width: 90px; }
 
 /* ---------- Plateau ---------- */
 #board { inset: 0; z-index: 2; }
-.tile { position: absolute; width: var(--cw); height: var(--ch); perspective: 500px; transition: transform .16s cubic-bezier(.3,1.6,.5,1), opacity .2s; cursor: pointer; will-change: transform; }
+.tile { position: absolute; width: var(--cw); height: var(--ch); perspective: 500px; transition: transform .16s cubic-bezier(.3,1.6,.5,1), opacity .2s; cursor: pointer; }
 .tile .base { position: absolute; inset: 0; border-radius: var(--rad); background: linear-gradient(150deg, var(--jade1), var(--jade2));
   box-shadow: calc(var(--s) * 4px) calc(var(--s) * 7px) calc(var(--s) * 11px) rgba(0, 20, 12, .38); transition: background .15s; }
 .tile .face { position: absolute; left: 0; top: 0; width: var(--fw); height: var(--fh); border-radius: var(--rad); transform-style: preserve-3d;
@@ -134,7 +134,7 @@ body.trayMode #comboBar { width: 90px; }
 #dock .wood.big { margin-top: 6px; }
 
 #fx { inset: 0; z-index: 30; pointer-events: none; overflow: hidden; }
-#fx > * { position: absolute; will-change: transform, opacity; }
+#fx > * { position: absolute; }
 .fx-text { font-weight: 800; font-size: 34px; color: #fff; -webkit-text-stroke: 5px #1a0e05; paint-order: stroke fill; white-space: nowrap; text-shadow: 0 3px 6px rgba(0,0,0,.4); transform: translate(-50%, -50%); }
 .fx-text.gold { color: var(--gold); }
 .fx-flash { width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; background: radial-gradient(circle, #fff 0%, rgba(255,246,150,.85) 30%, rgba(255,224,71,0) 70%); }
@@ -283,3 +283,36 @@ body.trayMode #comboBanner.on { transform: scale(var(--sc, 1)); }
   100% { transform: scale(1.4); opacity: 0; filter: brightness(4); } }
 .tile.selected .front { animation: selGlow .5s ease-in-out infinite alternate; }
 @keyframes selGlow { to { box-shadow: 0 0 calc(var(--s) * 30px) calc(var(--s) * 8px) rgba(255,240,90,1), calc(var(--s) * 2px) calc(var(--s) * 2.5px) 0 #b99a1c; } }
+
+/* ===== Effets réduits (petites configurations / WebView lent) ===== */
+body.lowfx #table::before, body.lowfx #aura, body.lowfx #comboBanner::before { display: none; }
+body.lowfx .tile { perspective: none; transition: transform .12s, opacity .15s; }
+body.lowfx .tile .base { box-shadow: calc(var(--s) * 3px) calc(var(--s) * 5px) 0 rgba(0, 20, 12, .3); transition: none; }
+body.lowfx .tile .face { transform-style: flat; transition: none; }
+body.lowfx .tile .front { box-shadow: calc(var(--s) * 2px) calc(var(--s) * 2.5px) 0 #CDEBD9; transition: none; }
+body.lowfx .tile .front::after { transition: none; }
+body.lowfx .tile.mystery .face { transform: none; }
+body.lowfx .tile.mystery .back { transform: none; backface-visibility: visible; -webkit-backface-visibility: visible; z-index: 2; }
+body.lowfx .tile.mystery .front { visibility: hidden; }
+body.lowfx .tile.selected .front { animation: none; box-shadow: 0 0 0 calc(var(--s) * 3px) #FFF06A; }
+body.lowfx .tile.hint .front { animation: none; background: #FFEE70; box-shadow: 0 0 0 calc(var(--s) * 3px) #FFE047; }
+body.lowfx .tile.gold .sp { animation: none; }
+body.lowfx .tile .stoneCap svg { filter: none; }
+body.lowfx .tile.vanish { animation: vanishLow .16s ease-in forwards; }
+@keyframes vanishLow { to { transform: scale(1.2); opacity: 0; } }
+body.lowfx .tile.shuf { animation: shufLow .4s ease-in-out; }
+@keyframes shufLow { 50% { transform: scale(.85); } }
+body.lowfx #table.pulse, body.lowfx #game.shake { animation: none; }
+body.lowfx #comboBanner { filter: none; }
+body.lowfx #comboText { text-shadow: 0 3px 0 rgba(0, 0, 0, .6); }
+body.lowfx #comboBanner.rainbow #comboText { animation: none; filter: none; background: none; color: var(--cc); -webkit-background-clip: border-box; background-clip: border-box; }
+body.lowfx #tray.glow { box-shadow: 0 0 0 3px var(--cc), inset 0 4px 10px rgba(0, 0, 0, .6); }
+body.lowfx #comboBar::after { box-shadow: none; }
+body.lowfx .fx-ring { box-shadow: none; }
+body.lowfx .fx-text { text-shadow: none; }
+body.lowfx .fx-flash { display: none; }
+body.lowfx .wood { box-shadow: 0 4px 0 #2a0f06; }
+body.lowfx .hudCol, body.lowfx .hudCol .gold, body.lowfx b.gold { text-shadow: 0 2px 0 rgba(0, 0, 0, .5); }
+body.lowfx .door { box-shadow: none; }
+body.lowfx #slit, body.lowfx #medal { filter: none; }
+body.lowfx #stage, body.lowfx .panel, body.lowfx .sheet { box-shadow: none; }

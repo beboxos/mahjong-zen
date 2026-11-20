@@ -9,7 +9,9 @@
   const LEVELS = MJ.Levels.LEVEL_COUNT;
 
   /* ---------- Sauvegarde (localStorage, comme hexa-sort : try/catch, valeurs assainies) ---------- */
-  const fresh = () => ({ level: 1, unlocked: 1, bestScore: 0, bestCombo: 0, mode: 'classic', sound: true, iq: 40, coins: 0, lastScore: 0, stars: {} });
+  // Effets réduits par défaut sur Android / petites configurations (modifiable dans le menu)
+  const autoLow = () => /Android/i.test(navigator.userAgent) || (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 2;
+  const fresh = () => ({ level: 1, unlocked: 1, bestScore: 0, bestCombo: 0, mode: 'classic', sound: true, iq: 40, coins: 0, lastScore: 0, stars: {}, fx: autoLow() ? 'low' : 'full' });
   const num = (v, d, min = 0) => (Number.isFinite(+v) ? Math.max(min, +v) : d);
   function load() {
     const o = fresh();
@@ -19,6 +21,7 @@
         o.level = Math.min(LEVELS, Math.floor(num(r.level, 1, 1))); o.unlocked = Math.min(LEVELS, Math.floor(num(r.unlocked, 1, 1)));
         o.bestScore = num(r.bestScore, 0); o.bestCombo = num(r.bestCombo, 0); o.iq = num(r.iq, 40); o.coins = Math.floor(num(r.coins, 0));
         o.lastScore = num(r.lastScore, 0); o.mode = r.mode === 'tray' ? 'tray' : 'classic'; o.sound = r.sound !== false;
+        if (r.fx === 'low' || r.fx === 'full') o.fx = r.fx;
         if (r.stars && typeof r.stars === 'object') o.stars = r.stars;
       }
     } catch (_) { /* stockage indisponible */ }
@@ -33,6 +36,7 @@
   let K = 1;
   const stage = $('stage'), boardEl = $('board'), fxEl = $('fx'), trayEl = $('tray');
   const trayMode = () => save.mode === 'tray';
+  function applyFx() { document.body.classList.toggle('lowfx', save.fx === 'low'); MJ.VFX.low = save.fx === 'low'; }
 
   function fit() {
     K = Math.min(innerWidth / 540, innerHeight / 960);
@@ -334,6 +338,7 @@
     showPanel(`<h2>Menu</h2>
       <div class="opt"><span>Sound</span><div class="seg"><button data-act="snd1" class="${save.sound ? 'on' : ''}">On</button><button data-act="snd0" class="${save.sound ? '' : 'on'}">Off</button></div></div>
       <div class="opt"><span>Mode</span><div class="seg"><button data-act="m-classic" class="${trayMode() ? '' : 'on'}">Classic</button><button data-act="m-tray" class="${trayMode() ? 'on' : ''}">Tray</button></div></div>
+      <div class="opt"><span>Effects</span><div class="seg"><button data-act="fx-full" class="${save.fx === 'low' ? '' : 'on'}">Full</button><button data-act="fx-low" class="${save.fx === 'low' ? 'on' : ''}">Light</button></div></div>
       <div style="font-size:16px;opacity:.75;margin:2px 0 6px">Best score ${save.bestScore} · Best combo x${save.bestCombo} · IQ ${save.iq.toFixed(1)}</div>
       <button class="btn" data-act="resume">Resume</button>${inGame ? '<button class="btn alt" data-act="restart">Restart level</button><button class="btn alt" data-act="home">Home</button>' : ''}`);
   }
@@ -343,6 +348,7 @@
     const a = b.dataset.act, inGame = !$('home').classList.contains('hidden') ? false : true;
     if (a === 'resume') closePanel();
     else if (a === 'snd1' || a === 'snd0') { save.sound = a === 'snd1'; MJ.Sfx.setMuted(!save.sound); persist(); menuPanel(inGame); }
+    else if (a === 'fx-full' || a === 'fx-low') { save.fx = a === 'fx-low' ? 'low' : 'full'; persist(); applyFx(); menuPanel(inGame); }
     else if (a === 'm-classic' || a === 'm-tray') {
       const m = a === 'm-tray' ? 'tray' : 'classic';
       if (m !== save.mode) { save.mode = m; persist(); if (inGame) { restart(); return; } }
@@ -393,7 +399,7 @@
   /* ---------- Démarrage : chargement zen -> accueil ---------- */
   function boot() {
     HUD.init(); MJ.VFX.init(fxEl); MJ.Shoji.init($('shoji'));
-    MJ.Sfx.setMuted(!save.sound);
+    MJ.Sfx.setMuted(!save.sound); applyFx();
     $('loadQuote').textContent = '“' + QUOTES[Math.floor(Math.random() * QUOTES.length)] + '”';
     let p = 0;
     const iv = setInterval(() => {

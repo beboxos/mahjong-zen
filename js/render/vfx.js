@@ -32,8 +32,9 @@
       }
       this.play(d, fr, { duration: life, easing: 'linear' });
     },
+    low: false, // « effets réduits » : posé par main.js
     burst(x, y, n = 18, power = 1) {
-      this.flash(x, y);
+      if (this.low) n = Math.ceil(n * .3); else this.flash(x, y);
       for (let i = 0; i < n; i++) this.particle(x, y, ['leaf', 'petal', 'spark', 'spark'][i % 4], power);
     },
     flash(x, y) {
@@ -58,6 +59,7 @@
       a.onfinish = () => { d.remove(); onEnd && onEnd(); };
     },
     confettiRain(n = 70) {
+      if (this.low) n = Math.ceil(n * .2);
       for (let i = 0; i < n; i++) {
         setTimeout(() => {
           const x = R(10, 530), d = this.node('fx-p', '', x, -20);
@@ -99,6 +101,11 @@
     comboFx(combo, mid) {
       const lv = Math.min(combo, 20), stg = document.getElementById('stage');
       stg.style.setProperty('--cc', this.comboColor(combo));
+      if (this.low) { // mode léger : une onde et quelques étincelles seulement
+        this.ring(mid.x, mid.y, 3 + lv * .1);
+        for (let i = 0; i < 3; i++) this.particle(mid.x, mid.y, 'spark', 1);
+        return;
+      }
       this.ring(mid.x, mid.y, 3 + lv * .15);
       if (lv >= 4) this.ring(mid.x, mid.y, 4.5 + lv * .2, 90);
       if (lv >= 9) this.ring(mid.x, mid.y, 6 + lv * .25, 180, 700);
@@ -110,12 +117,14 @@
       const t = document.getElementById('table'); t.classList.remove('pulse'); void t.offsetWidth; t.classList.add('pulse');
     },
     fireworks(n = 9) {
+      if (this.low) n = Math.min(n, 2);
       const cols = ['#FFE047', '#FF5CD8', '#3CD8FF', '#2CE84F', '#FF8A3C'];
       for (let i = 0; i < n; i++) setTimeout(() => {
         const x = R(80, 460), y = R(150, 520);
         document.getElementById('stage').style.setProperty('--cc', cols[i % cols.length]);
-        this.ring(x, y, 5); this.streaks(x, y, 18, 170); this.screenFlash(x, y, .3, 300);
-        for (let k = 0; k < 22; k++) this.particle(x, y, k % 3 ? 'spark' : 'confetti', 1.3);
+        this.ring(x, y, 5);
+        if (!this.low) { this.streaks(x, y, 18, 170); this.screenFlash(x, y, .3, 300); }
+        for (let k = 0; k < (this.low ? 8 : 22); k++) this.particle(x, y, k % 3 ? 'spark' : 'confetti', 1.3);
         MJ.Sfx && MJ.Sfx.clack(0, 1.4, .3);
       }, i * 260);
     },
@@ -131,6 +140,7 @@
       this.play(m, [{ transform: 'translateY(-140px) rotate(-12deg)' }, { transform: 'translateY(0) rotate(6deg)', offset: .3 }, { transform: 'translateY(-14px) rotate(-5deg)', offset: .5 },
         { transform: 'translateY(0) rotate(4deg)', offset: .7 }, { transform: 'translateY(-160px) rotate(0)' }], { duration: 1500, easing: 'cubic-bezier(.3,1.4,.5,1)' });
       document.getElementById('stage').style.setProperty('--cc', T[1]);
+      if (this.low) { this.confettiRain(level ? 60 : 0); return; }
       this.screenFlash(270, 330, .6, 600); this.rays(270, 330, 1100); this.shake(8 + level * 3);
       this.ring(270, 330, 6, 0, 800); this.ring(270, 330, 9, 150, 900); this.streaks(270, 330, 24 + level * 10, 260);
       this.confettiRain(level === 2 ? 130 : level === 1 ? 90 : 45);
