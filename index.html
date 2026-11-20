@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#082E22">
+<title>Mahjong Zen</title>
+<link rel="stylesheet" href="css/style.css?v=2">
+</head>
+<body>
+<div id="stage">
+
+  <!-- Tapis feutrine + ombres de bambou + filigrane -->
+  <div id="table"><div id="leaves"></div><div id="watermark"></div></div>
+
+  <div id="aura"></div>
+
+  <!-- Jeu -->
+  <div id="game">
+    <header id="hud">
+      <button class="wood round" id="btnBack" aria-label="Retour"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" /></svg></button>
+      <div id="hudCenter">
+        <div class="hudCol classic"><span class="lbl">Level</span><b id="hudLevel">1</b></div>
+        <div class="hudCol classic mid"><span class="lbl">Score</span><b id="hudScore" class="gold">0</b><i id="scoreGlow"></i></div>
+        <div class="hudCol classic"><span class="lbl">Matches</span><b id="hudMatches">0</b></div>
+        <div class="hudCol tray iq"><span class="lbl">IQ</span><b id="hudIQ" class="gold">40.0</b><i id="iqGlow"></i></div>
+      </div>
+      <button class="wood round" id="btnMenu" aria-label="Menu"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14" /></svg></button>
+    </header>
+
+    <div id="comboZone">
+      <div id="coinBox"><i class="coin"></i><b id="coinCount">0</b></div>
+      <div id="comboBanner"><span id="comboText">Combo x2</span><i id="comboBar"></i></div>
+      <div id="tray"><i></i><i></i><i></i><i></i></div>
+    </div>
+
+    <div id="board"></div>
+
+    <footer id="dock">
+      <button class="wood round big" id="btnShuffle" aria-label="Mélanger"><svg viewBox="0 0 24 24"><path d="M3 7h3.5c3 0 4 2 5.5 5s2.500 5 5.500 5H21M3 17h3.500c1.800 0 2.800-.7 3.700-1.900M13.800 8.900C14.700 7.700 15.700 7 17.500 7H21M18.500 4L21.500 7l-3 3M18.500 14l3 3-3 3"/></svg><em class="badge" id="bShuffle">3</em></button>
+      <button class="wood round big" id="btnHint" aria-label="Indice"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.500 10.900c.700.600 1 1.200 1 2.100h5c0-.9.300-1.500 1-2.100A6 6 0 0 0 12 3z"/></svg><em class="badge" id="bHint">3</em></button>
+      <button class="wood round big" id="btnUndo" aria-label="Annuler"><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-4"/></svg><em class="badge" id="bUndo">∞</em></button>
+    </footer>
+    <div id="fx"></div>
+  </div>
+
+  <!-- Portes Shoji -->
+  <div id="shoji" class="closed">
+    <div class="door left"><div class="paper"></div><div class="lattice"></div></div>
+    <div class="door right"><div class="paper"></div><div class="lattice"></div></div>
+    <div id="slit"></div>
+    <div id="medal"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="57" fill="#4A1F10" stroke="#D99B43" stroke-width="4"/><circle cx="60" cy="60" r="46" fill="none" stroke="#C88A4B" stroke-width="2"/>
+      <g fill="#E8B960" stroke="#8A5A00" stroke-width="1.5">
+        <g id="petals"></g></g>
+      <rect x="44" y="36" width="32" height="46" rx="6" fill="#FAFAFA" stroke="#247D4E" stroke-width="3"/><text x="60" y="72" font-size="30" text-anchor="middle" fill="#C92323" font-weight="900" font-family="'Noto Serif CJK SC','Microsoft YaHei',serif">中</text></svg></div>
+    <div id="flash"></div>
+  </div>
+
+  <!-- Accueil -->
+  <div id="home" class="hidden">
+    <div id="homeTop">
+      <div class="pill"><i class="coin"></i><b id="homeCoins">0</b></div>
+      <div id="logo"><span class="tilt"><i>中</i></span><h1>Mahjong<small>ZEN</small></h1></div>
+      <button class="wood round" id="btnSettings" aria-label="Paramètres"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14" /></svg></button>
+    </div>
+    <div id="homeBottom">
+      <div id="worldName">Bambouseraie</div>
+      <button id="btnPlay" class="cta">Level 1</button>
+      <button id="btnLevels" class="link">Tous les niveaux</button>
+    </div>
+  </div>
+
+  <!-- Carte citation -->
+  <div id="quote" class="hidden"><div class="card"><div class="ico"><span>中</span></div><p id="quoteText"></p></div></div>
+
+  <!-- Sélection de niveau -->
+  <div id="levelSel" class="hidden"><div class="sheet">
+    <div class="sheetHead"><b>Niveaux</b><button class="wood round sm" id="lvlClose" aria-label="Fermer"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div id="lvlGrid"></div></div></div>
+
+  <!-- Fenêtres (menu / victoire / défaite) -->
+  <div id="modal" class="hidden"><div class="panel" id="panel"></div></div>
+
+  <div id="toast"></div>
+
+  <!-- Chargement -->
+  <div id="loading"><div id="leaves2"></div>
+    <div class="lg"><span class="tilt"><i>中</i></span><h1>Mahjong<small>ZEN</small></h1></div>
+    <p id="loadQuote"></p>
+    <div class="bar"><i id="loadBar"></i></div>
+  </div>
+</div>
+
+<script src="js/engine/layouts.js"></script>
+<script src="js/engine/board.js"></script>
+<script src="js/engine/generator.js"></script>
+<script src="js/engine/levels.js"></script>
+<script src="js/render/symbols.js"></script>
+<script src="js/render/tiles.js"></script>
+<script src="js/render/vfx.js"></script>
+<script src="js/render/shoji.js"></script>
+<script src="js/audio/sfx.js"></script>
+<script src="js/ui/hud.js"></script>
+<script src="js/main.js?v=2"></script>
+</body>
+</html>

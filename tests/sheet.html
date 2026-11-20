@@ -1,0 +1,13 @@
+<!doctype html><meta charset="utf-8"><title>Planche des symboles</title>
+<style>body{margin:0;background:#0E4A36;display:flex;flex-wrap:wrap;gap:8px;padding:8px;font:12px sans-serif;color:#fff}
+.t{width:118px;height:157px;background:linear-gradient(150deg,#FAFAFA,#F2F4EF);border-radius:15px;position:relative;box-shadow:4px 5px 0 #247D4E}
+.t svg{position:absolute;left:13%;top:11%;width:74%;height:78%}.t.g{background:linear-gradient(145deg,#FFE670,#DF9E1A)}
+.t span{position:absolute;bottom:-14px;left:0;color:#cfe}</style>
+<body></body>
+<script src="../js/engine/layouts.js"></script><script src="../js/engine/board.js"></script><script src="../js/engine/generator.js"></script><script src="../js/engine/levels.js"></script><script src="../js/render/symbols.js"></script>
+<script>
+const only=new URLSearchParams(location.search).get('set');
+let list=[...MJ.Types.SPECIAL,'gold'];
+if(only==='std')list=MJ.Types.STANDARD;
+list.forEach(t=>{const d=document.createElement('div');d.className='t'+(t==='gold'?' g':'');d.innerHTML=MJ.Symbols.svg(t)+'<span>'+t+'</span>';document.body.appendChild(d);});
+</script>
